@@ -1,4 +1,5 @@
 import os.path
+import datetime
 # print dir()
 # print vars()
 # print dir(context)
@@ -9,6 +10,8 @@ metrics = {}
 #need to find the ID number of the individual deployment:
 task = context.task
 real_task = taskBlockService.getTask(task.id)
+
+print real_task.steps
 
 print real_task  #echoes this out on the UI for visibility
 #print task.metadata['application']
@@ -33,6 +36,15 @@ metrics['id']		= real_task.id
 metrics['deployed'] = real_task.state
 
 print "DICT: ", metrics
+
+doneTime = metrics['completionDate']
+if doneTime is None:
+    #print "Nothing"
+    doneTime = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+    print "NOW: ", datetime.datetime.utcnow()
+    print doneTime
+
+#print doneTime
 
 #echo this stuff out to the UI
 #for k,v in metrics.items():
@@ -86,7 +98,7 @@ print 'startTimeRaw is set to ' + str(startTimeRaw)
 #               Date, Start Time, Stop Time, Environment, Domain, AppAlias, EarName, returnCode, Build, Duration of Deploy
 #
 
-csvdata = str(metrics['startDate']) + "," + str(metrics['completionDate']) + "," + str(metrics['environment']) + "," + str(metrics['application']) + "," + str(metrics['errorCode']) + "," + str(metrics['version']) + "," + str(metrics['deployed'])
+csvdata = str(metrics['startDate']) + "," + str(doneTime) + "," + str(metrics['environment']) + "," + str(metrics['application']) + "," + str(metrics['errorCode']) + "," + str(metrics['version']) + "," + str(metrics['deployed'])
 
 # Write to a file:
 logfile = open(fullLog, 'w')
